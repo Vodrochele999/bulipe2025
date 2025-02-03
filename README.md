@@ -23,3 +23,27 @@ Deployment process
 CI/CD workflow.
 Submission - Share your Github repository link (no deployment required) via email at career@bulipetech.com
 Deadlines: Today 6:30 PM
+#############################################################################################################
+├── infrastructure/  # Terraform 
+│   ├── main.tf
+│   ├── variables.tf
+│   └── ...
+├── kubernetes/    # Kubernetes manifests
+│   ├── frontend/
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   └── ...
+│   ├── backend/
+│   │   ├── deployment.yaml
+│   │   ├── service.yaml
+│   │   └── ...
+│   └── database/
+│       ├── deployment.yaml
+│       ├── service.yaml
+│       └── ...
+├── cicd/           # CI/CD pipeline configuration
+│   └── workflow.yaml (GitHub Actions example)
+├── frontend/      # Frontend application code
+├── backend/       # Backend application code
+├── database/      # Database scripts or configuration
+└── README.md
