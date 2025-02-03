@@ -1,0 +1,61 @@
+steps:
+  # Build and push frontend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA', '-f', 'frontend/Dockerfile', 'frontend']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA']
+
+  # Build and push backend image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA', '-f', 'backend/Dockerfile', 'backend']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA']
+
+  # Deploy to GKE (using kubectl)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/frontend-deployment'
+      - 'frontend-container=gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
+      - '-n' # Namespace (optional, if not default)
+      - '$NAMESPACE' # Use a Cloud Build substitution variable
+    env: # Define substitution variables
+      - name: NAMESPACE
+        value: "default" # Replace with your namespace if needed
+
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/backend-deployment'
+      - 'backend-container=gcr.io/$PROJECT_ID/backend:$COMMIT_SHA'
+      - '-n'
+      - '$NAMESPACE'
+    env:
+      - name: NAMESPACE
+        value: "default"
+
+# Optional: Deploy the database (if it's also built as a container)
+# - name: 'gcr.io/cloud-builders/kubectl'
+#   args:
+#       - 'set'
+#       - 'image'
+#       - 'statefulset/postgres-db' # Or deployment if not a StatefulSet
+#       - 'postgres=gcr.io/$PROJECT_ID/postgres-db:$COMMIT_SHA' # Replace with your database container name and image
+#       - '-n'
+#       - '$NAMESPACE'
+#   env:
+#       - name: NAMESPACE
+#         value: "default"
+
+# Apply other Kubernetes resources (services, PVCs, etc.)
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', '.'] # Apply all YAML files in the repo root
+  env:
+    - name: NAMESPACE
+      value: "default"
+images: # Images built by this Cloud Build
+- 'gcr.io/$PROJECT_ID/frontend'
+- 'gcr.io/$PROJECT_ID/backend'
+# - 'gcr.io/$PROJECT_ID/postgres-db' # If you build the DB image here
