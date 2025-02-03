@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 3 # Adjust as needed
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend-container
+          image: <your-frontend-image> # Replace with your frontend image
+          ports:
+            - containerPort: 80 # Or the port your frontend uses
+          resources: # Resource limits and requests (important!)
+            limits:
+              cpu: "100m"
+              memory: "256Mi"
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+          env: # Environment variables for frontend (if needed)
+            - name: REACT_APP_BACKEND_URL # Example
+              value: "http://backend-service:8080" # Backend service name
