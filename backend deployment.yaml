@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  replicas: 3 # Adjust as needed
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend-container
+          image: <your-backend-image> # Replace with your backend image
+          ports:
+            - containerPort: 8080 # Or the port your backend uses
+          resources: # Resource limits and requests
+            limits:
+              cpu: "200m"
+              memory: "512Mi"
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+          env: # Environment variables for backend
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: # Read from a Kubernetes Secret (best practice)
+                  name: database-secrets
+                  key: connection-string
