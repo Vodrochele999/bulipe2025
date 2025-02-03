@@ -1,5 +1,5 @@
 # bulipe2025
-bulip project
+
 Task: Design and implement a highly available, scalable, and secure cloud-based infrastructure for a given application while following best DevOps practices.
 
 Scenario: 
