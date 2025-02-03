@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres
+  clusterIP: None # Headless service for StatefulSet
+
+---
+# PersistentVolumeClaim for PostgreSQL (postgres-pvc.yaml)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes: [ "ReadWriteOnce" ] # Or ReadWriteMany if your storage supports it
+  resources:
+    requests:
+      storage: 1Gi # Adjust storage size as needed
+  storageClassName: <your-storage-class> # Replace with your storage class name
